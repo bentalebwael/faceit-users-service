@@ -1,0 +1,39 @@
+linters:
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - gosimple
+    - ineffassign
+    - typecheck
+    - unused
+
+run:
+  deadline: 5m
+  tests: true
+  go: "1.22"
+
+issues:
+  exclude-dirs:
+    - internal/api/grpc/gen
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+    - path: internal/api/grpc/gen/.*
+      linters:
+        - all
+
+linters-settings:
+  gofmt:
+    simplify: true
+  errcheck:
+    check-type-assertions: true
+
+# Global output settings
+output:
+  formats:
+    - format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true

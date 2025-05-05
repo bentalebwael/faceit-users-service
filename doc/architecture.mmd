@@ -1,0 +1,115 @@
+graph LR
+    subgraph External Clients
+        direction LR
+        RestClients[REST Clients]
+        GrpcClients[gRPC Clients]
+    end
+
+    subgraph UserService Application [User Management Service (Go)]
+        direction TB
+
+        subgraph API Layer
+            direction TB
+            RestApi[REST API (Gin Router + Handlers)]
+            GrpcApi[gRPC API (Server + Handlers)]
+            Middleware[Middleware / Interceptors <br/>(Logging, Rate Limit, Tracing)]
+            HealthCheck[Health Check Endpoint]
+        end
+
+        subgraph Domain Layer
+            direction TB
+            UserService[User Service <br/>(Business Logic)]
+            Interfaces[Interfaces <br/>(Repository, Publisher)]
+            DomainModels[Domain Models <br/>(User Struct, Errors)]
+        end
+
+        subgraph Repository Layer
+            direction TB
+            CacheDecorator[Cache Decorator <br/>(Implements Repository Interface)]
+            DbRepo[DB Repository <br/>(Postgres Implementation)]
+        end
+
+        subgraph Eventing Layer
+            direction TB
+            EventPublisher[Event Publisher <br/>(Implements Publisher Interface)]
+        end
+
+        subgraph Platform Layer
+            direction TB
+            Config[Configuration (Viper)]
+            Logger[Logger (slog)]
+            Tracer[Tracer (OpenTelemetry)]
+            RateLimiter[Rate Limiter]
+            DbConn[DB Connection (sqlx)]
+            RedisClient[Redis Client]
+            KafkaWriter[Kafka Writer]
+        end
+
+        %% API Layer Connections
+        RestApi --> Middleware
+        GrpcApi --> Middleware
+        Middleware --> UserService
+        HealthCheck -- Uses --> DbConn
+        HealthCheck -- Uses --> RedisClient
+        HealthCheck -- Uses --> KafkaWriter
+
+        %% Domain Layer Connections
+        UserService -- Uses --> Interfaces
+        UserService -- Uses --> DomainModels
+
+        %% Repository Layer Connections
+        Interfaces -- Implemented By --> CacheDecorator
+        CacheDecorator -- Uses --> DbRepo
+        CacheDecorator -- Uses --> RedisClient
+        DbRepo -- Uses --> DbConn
+
+        %% Eventing Layer Connections
+        Interfaces -- Implemented By --> EventPublisher
+        EventPublisher -- Uses --> KafkaWriter
+
+        %% Platform Dependencies
+        RestApi -- Uses --> Logger
+        RestApi -- Uses --> Tracer
+        RestApi -- Uses --> RateLimiter
+        GrpcApi -- Uses --> Logger
+        GrpcApi -- Uses --> Tracer
+        GrpcApi -- Uses --> RateLimiter
+        UserService -- Uses --> Logger
+        CacheDecorator -- Uses --> RedisClient
+        DbRepo -- Uses --> DbConn
+        EventPublisher -- Uses --> KafkaWriter
+        HealthCheck -- Uses --> Logger
+        subgraph Config & Init [main.go]
+            Config -- Loads --> Platform Layer
+        end
+    end
+
+
+    subgraph External Dependencies
+        direction TB
+        PostgresDB[(PostgreSQL Database)]
+        RedisCache[(Redis Cache)]
+        KafkaBroker[(Kafka Broker)]
+        Jaeger[(Jaeger Collector)]
+        DownstreamServices[Downstream Services / Consumers]
+    end
+
+    %% External Client Connections
+    RestClients --> RestApi
+    GrpcClients --> GrpcApi
+
+    %% Application to External Dependencies
+    DbRepo --> PostgresDB
+    CacheDecorator --> RedisCache
+    EventPublisher --> KafkaBroker
+    Tracer --> Jaeger
+
+    %% Kafka Consumer Connection
+    KafkaBroker --> DownstreamServices
+
+
+    %% Style definitions (optional)
+    classDef external fill:#f9f,stroke:#333,stroke-width:2px;
+    class PostgresDB,RedisCache,KafkaBroker,Jaeger,DownstreamServices external;
+    classDef clients fill:#ccf,stroke:#333,stroke-width:2px;
+    class RestClients,GrpcClients clients

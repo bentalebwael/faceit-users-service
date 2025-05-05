@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package user;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// Set the Go package path. The package name will be 'user' by default.
+option go_package = "github.com/bentalebwael/faceit-users-service/internal/api/grpc/gen/user";
+
+// UserService defines the gRPC service for user management
+service UserService {
+  // Create a new user
+  rpc CreateUser(CreateUserRequest) returns (User);
+  // Get a user by ID
+  rpc GetUser(GetUserRequest) returns (User);
+  // Update an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (User);
+  // Delete a user by ID
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
+  // List users with pagination and filtering
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+}
+
+// CreateUserRequest represents the request to create a new user
+message CreateUserRequest {
+  string first_name = 1;
+  string last_name = 2;
+  string nickname = 3;
+  string password = 4;
+  string email = 5;
+  string country = 6; // ISO 3166-1 alpha-2
+}
+
+// GetUserRequest represents the request to retrieve a user
+message GetUserRequest {
+  string id = 1; // User ID (UUID format)
+}
+
+// UpdateUserRequest represents the request to update a user
+// Fields are optional; only provided fields will be updated.
+message UpdateUserRequest {
+  string id = 1;         // User ID (UUID format)
+  string first_name = 2; // Optional
+  string last_name = 3;  // Optional
+  string nickname = 4;   // Optional
+  string email = 5;      // Optional
+  string country = 6;    // Optional (ISO 3166-1 alpha-2)
+}
+
+// DeleteUserRequest represents the request to delete a user
+message DeleteUserRequest {
+  string id = 1; // User ID (UUID format)
+}
+
+// Filter represents a filter condition
+message Filter {
+  string field = 1;     // Field to filter on
+  string value = 2;     // Value to compare against
+}
+
+// ListUsersRequest represents the request to list users
+message ListUsersRequest {
+  int32 limit = 1;      // Number of users per page (default 10)
+  int32 page = 2;       // Page number (1-based, default 1)
+  repeated Filter filters = 3;  // List of filters to apply
+  string order_by = 4;  // Field to order by (e.g., "created_at", "nickname")
+  bool order_desc = 5;  // Order descending (default true)
+}
+
+// ListUsersResponse represents the paginated response of users
+message ListUsersResponse {
+  repeated User users = 1;
+  bool has_more = 2;
+  int64 total_count = 3; // Total number of users matching the filters
+}
+
+// User represents a user entity in responses
+message User {
+  string id = 1;                         // User ID (UUID format)
+  string first_name = 2;
+  string last_name = 3;
+  string nickname = 4;
+  string email = 5;
+  string country = 6;                    // ISO 3166-1 alpha-2
+  google.protobuf.Timestamp created_at = 7; // Use Timestamp for dates
+  google.protobuf.Timestamp updated_at = 8; // Use Timestamp for dates
+}
+
+// Error represents a structured error response (optional, for potential future use in gRPC)
+message Error {
+  string code = 1;    // e.g., "not_found", "invalid_argument"
+  string message = 2; // Human-readable message
+  map<string, string> details = 3; // Optional details
+}

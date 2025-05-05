@@ -1,0 +1,66 @@
+# Binaries and build artifacts
+/build/
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Generated files
+/internal/api/grpc/gen/
+/docs/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+.DS_Store
+*.iml
+.project
+.classpath
+*.sublime-workspace
+*.sublime-project
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+/vendor/
+go.work
+go.work.sum
+
+# Test coverage
+coverage.out
+coverage.html
+
+# Database
+/data/
+
+# Logs
+*.log
+*.log.*
+logs/
+
+# Cache
+.cache/
+tmp/
+
+# Docker volumes
+docker/data/
+docker/volumes/
+
+# Generated protobuf files in wrong location
+/proto/**/*.pb.go
+/proto/**/*_grpc.pb.go
+
+# System files
+Thumbs.db
+.directory
+*~
