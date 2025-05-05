@@ -141,11 +141,13 @@ func (s *Service) ListUsers(ctx context.Context, params ListParams) ([]User, boo
 		"country":    {},
 	}
 
-	for i, filter := range params.Filters {
-		if _, ok := allowedFilters[filter.Field]; !ok {
-			params.Filters = append(params.Filters[:i], params.Filters[i+1:]...)
+	validFilters := make([]Filter, 0, len(params.Filters))
+	for _, filter := range params.Filters {
+		if _, ok := allowedFilters[filter.Field]; ok {
+			validFilters = append(validFilters, filter)
 		}
 	}
+	params.Filters = validFilters
 	if params.OrderBy != "" {
 		if _, ok := allowedFilters[params.OrderBy]; !ok && params.OrderBy != "created_at" && params.OrderBy != "updated_at" {
 			params.OrderBy = "created_at" // Default to created_at if invalid
