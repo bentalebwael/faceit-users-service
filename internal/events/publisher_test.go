@@ -33,6 +33,7 @@ func newMockKafkaWriter() *mockKafkaWriter {
 }
 
 func TestUserEventPublisher_createUserEvent(t *testing.T) {
+	t.Parallel()
 	mockWriter := newMockKafkaWriter()
 	publisher := NewUserEventPublisher(mockWriter)
 
@@ -69,6 +70,7 @@ func TestUserEventPublisher_createUserEvent(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			event := publisher.createUserEvent(tt.user, tt.eventType)
 
 			if event.Type != tt.eventType {
@@ -91,6 +93,7 @@ func TestUserEventPublisher_createUserEvent(t *testing.T) {
 }
 
 func TestUserEventPublisher_Publish(t *testing.T) {
+	t.Parallel()
 	mockWriter := newMockKafkaWriter()
 	publisher := NewUserEventPublisher(mockWriter)
 
@@ -194,6 +197,7 @@ func TestUserEventPublisher_Publish(t *testing.T) {
 }
 
 func TestUserEventPublisher_PublishMethods(t *testing.T) {
+	t.Parallel()
 	mockWriter := newMockKafkaWriter()
 	publisher := NewUserEventPublisher(mockWriter)
 

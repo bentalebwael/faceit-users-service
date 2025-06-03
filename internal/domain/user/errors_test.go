@@ -6,6 +6,7 @@ import (
 )
 
 func TestIsNotFound(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 		err  error
@@ -30,6 +31,7 @@ func TestIsNotFound(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			if got := IsNotFound(tt.err); got != tt.want {
 				t.Errorf("IsNotFound() = %v, want %v", got, tt.want)
 			}
@@ -38,6 +40,7 @@ func TestIsNotFound(t *testing.T) {
 }
 
 func TestIsAlreadyExists(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 		err  error
@@ -72,6 +75,7 @@ func TestIsAlreadyExists(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			if got := IsAlreadyExists(tt.err); got != tt.want {
 				t.Errorf("IsAlreadyExists() = %v, want %v", got, tt.want)
 			}
@@ -80,6 +84,7 @@ func TestIsAlreadyExists(t *testing.T) {
 }
 
 func TestIsValidationError(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name string
 		err  error
@@ -109,6 +114,7 @@ func TestIsValidationError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			if got := IsValidationError(tt.err); got != tt.want {
 				t.Errorf("IsValidationError() = %v, want %v", got, tt.want)
 			}
@@ -117,6 +123,7 @@ func TestIsValidationError(t *testing.T) {
 }
 
 func TestValidationError_Error(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name    string
 		field   string
@@ -145,6 +152,7 @@ func TestValidationError_Error(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			e := &ValidationError{
 				Field:   tt.field,
 				Message: tt.message,
@@ -157,6 +165,7 @@ func TestValidationError_Error(t *testing.T) {
 }
 
 func TestNewValidationError(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name    string
 		field   string
@@ -181,6 +190,7 @@ func TestNewValidationError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			err := NewValidationError(tt.field, tt.message)
 			var ve *ValidationError
 			ok := errors.As(err, &ve)

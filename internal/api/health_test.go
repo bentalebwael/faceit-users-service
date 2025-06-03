@@ -56,6 +56,7 @@ func setupMocks(t *testing.T) (*sqlx.DB, sqlmock.Sqlmock, *redis.Client, redismo
 }
 
 func TestNewHealthChecker(t *testing.T) {
+	t.Parallel()
 	sqlxDB, _, redisClient, _, kafkaWriter, _ := setupMocks(t)
 	logger := discardLogger()
 
@@ -69,6 +70,7 @@ func TestNewHealthChecker(t *testing.T) {
 }
 
 func TestHealthChecker_Check_DBUnhealthy(t *testing.T) {
+	t.Parallel()
 	_, dbMock, _, redisMock, _, hc := setupMocks(t)
 
 	dbErr := errors.New("db connection failed")
@@ -88,6 +90,7 @@ func TestHealthChecker_Check_DBUnhealthy(t *testing.T) {
 }
 
 func TestHealthChecker_Check_RedisUnhealthy(t *testing.T) {
+	t.Parallel()
 	_, dbMock, _, redisMock, _, hc := setupMocks(t)
 
 	redisErr := errors.New("redis connection refused")
@@ -107,6 +110,7 @@ func TestHealthChecker_Check_RedisUnhealthy(t *testing.T) {
 }
 
 func TestHealthChecker_Check_KafkaUnhealthy(t *testing.T) {
+	t.Parallel()
 	_, dbMock, _, redisMock, kafkaWriter, hc := setupMocks(t)
 
 	assert.Equal(t, "localhost:99999", kafkaWriter.Addr.String())
@@ -127,6 +131,7 @@ func TestHealthChecker_Check_KafkaUnhealthy(t *testing.T) {
 }
 
 func TestHealthChecker_Check_MultipleUnhealthy(t *testing.T) {
+	t.Parallel()
 	_, dbMock, _, redisMock, _, hc := setupMocks(t)
 
 	dbErr := errors.New("db connection failed")

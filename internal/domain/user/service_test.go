@@ -9,6 +9,15 @@ import (
 	"github.com/google/uuid"
 )
 
+// setupServiceTest initializes a new Service with mock dependencies for testing.
+func setupServiceTest(t *testing.T) (*Service, *mockRepository, *mockPublisher) {
+	repo := newMockRepository()
+	pub := newMockPublisher()
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil)) // Or use a testing logger if preferred
+	service := NewService(repo, pub, logger)
+	return service, repo, pub
+}
+
 type mockRepository struct {
 	users map[uuid.UUID]*User
 }
@@ -147,10 +156,7 @@ func (m *mockPublisher) PublishDeletedUser(ctx context.Context, user *User) erro
 }
 
 func TestService_CreateUser(t *testing.T) {
-	repo := newMockRepository()
-	pub := newMockPublisher()
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	service := NewService(repo, pub, logger)
+	service, _, pub := setupServiceTest(t)
 
 	tests := []struct {
 		name      string
@@ -227,10 +233,7 @@ func TestService_CreateUser(t *testing.T) {
 }
 
 func TestService_UpdateUser(t *testing.T) {
-	repo := newMockRepository()
-	pub := newMockPublisher()
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	service := NewService(repo, pub, logger)
+	service, _, pub := setupServiceTest(t)
 
 	initialUser := &User{
 		FirstName: "John",
@@ -325,10 +328,7 @@ func TestService_UpdateUser(t *testing.T) {
 }
 
 func TestService_DeleteUser(t *testing.T) {
-	repo := newMockRepository()
-	pub := newMockPublisher()
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	service := NewService(repo, pub, logger)
+	service, _, pub := setupServiceTest(t)
 
 	user := &User{
 		FirstName: "John",
@@ -389,10 +389,7 @@ func TestService_DeleteUser(t *testing.T) {
 }
 
 func TestService_ListUsers(t *testing.T) {
-	repo := newMockRepository()
-	pub := newMockPublisher()
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	service := NewService(repo, pub, logger)
+	service, _, _ := setupServiceTest(t)
 
 	users := []*User{
 		{

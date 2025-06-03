@@ -10,10 +10,12 @@ import (
 )
 
 func TestNewProducer(t *testing.T) {
+	t.Parallel()
 	// Since we can't replace kafka.Dial directly, we'll test individual scenarios
 	// without actually calling kafka.Dial
 
 	t.Run("Success with existing topic", func(t *testing.T) {
+		t.Parallel()
 		cfg := &config.Config{
 			Kafka: config.KafkaConfig{
 				Brokers:    "localhost:9092",
@@ -53,7 +55,9 @@ func createTestWriter(cfg *config.Config) (*kafka.Writer, error) {
 }
 
 func TestClose(t *testing.T) {
+	t.Parallel()
 	t.Run("Success", func(t *testing.T) {
+		t.Parallel()
 		writer := &kafka.Writer{
 			Addr:  kafka.TCP("localhost:9092"),
 			Topic: "test-topic",
@@ -64,6 +68,7 @@ func TestClose(t *testing.T) {
 	})
 
 	t.Run("Nil writer", func(t *testing.T) {
+		t.Parallel()
 		err := Close(nil)
 		assert.NoError(t, err)
 	})

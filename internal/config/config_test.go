@@ -216,6 +216,7 @@ func TestLoadConfig_Validation(t *testing.T) {
 }
 
 func TestValidateConfig(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name    string
 		config  *Config
@@ -279,6 +280,7 @@ func TestValidateConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			err := validateConfig(tt.config)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("validateConfig() error = %v, wantErr %v", err, tt.wantErr)
